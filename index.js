@@ -6,7 +6,7 @@ var svgicons2svgfont = require('gulp-svgicons2svgfont')
 var quote = require("quote")
 var gutil = require("gulp-util")
 
-var PLUGIN_NAME = "iconfont-sass-map"
+var PLUGIN_NAME = "iconfont-glyph"
 
 var svgStream = function(options){
   var svgOption = extend({}, options)
@@ -14,7 +14,7 @@ var svgStream = function(options){
   return svgicons2svgfont(svgOption)
 }
 
-var glyphsMap = function(glyphs, quoted){
+var glyphsMap = function(glyphs){
   return glyphs.reduce(function(obj, glyph){
     glyphs.forEach(function(glyph){
       var code = "\\" + glyph.unicode[0].charCodeAt(0).toString(16).toUpperCase()
@@ -35,10 +35,6 @@ var getMapValue = function(glyphs, appendMap){
 module.exports = function(opt){
   var inputStream = svgStream(opt)
   var outputStream = new stream.PassThrough({ objectMode: true });
-  var options = extend({
-    append: {}
-  }, opt)
-
   var _glyphs = undefined;
 
   inputStream.on('glyphs', function(glyphs){
@@ -52,7 +48,7 @@ module.exports = function(opt){
     if (file.isStream()) {
       return cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
     }
-    var mapValue = getMapValue(_glyphs, options.append)
+    var mapValue = getMapValue(_glyphs)
     // var scss = getSassContent(mapValue, options.fontVariable, options.asDefault)
     file.path = gutil.replaceExtension(file.path, ".json")
     file.contents = new Buffer(JSON.stringify(mapValue))
