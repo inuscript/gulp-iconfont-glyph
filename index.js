@@ -43,16 +43,18 @@ module.exports = function(opt){
     new gutil.PluginError(PLUGIN_NAME, err, {showStack: true})
   }).pipe(through2.obj(function(file, enc, cb){
     if (file.isNull() || _glyphs === undefined) {
-      return cb(null, file);
+      return cb(null);
     }
     if (file.isStream()) {
       return cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
     }
     var mapValue = getMapValue(_glyphs)
-    // var scss = getSassContent(mapValue, options.fontVariable, options.asDefault)
-    file.path = gutil.replaceExtension(file.path, ".json")
-    file.contents = new Buffer(JSON.stringify(mapValue))
-    outputStream.push(file)
+    var glyphFile = new gutil.File({
+      path: gutil.replaceExtension(file.path),
+      extension: "json",
+      contents: new Buffer(JSON.stringify(mapValue))
+    })
+    outputStream.push(glyphFile)
     cb()
   }, function(){
     outputStream.end();
