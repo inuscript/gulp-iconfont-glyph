@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 @mixin font-face($path, $name){
   $url: #{$path}#{$name};
   @font-face {
@@ -27,12 +25,9 @@
   }
 
   @each $glyph, $code in $glyphs{
-    #{$prefix}-#{$glyph}::before {
+    #{$prefix}#{$glyph}::before {
       @extend %icon;
       content: quote(#{$code});
     }
   }
 }
-
-@include font-face("/dest/fonts/", map-get($font, fontName));
-@include generate-icons(".tk-icon", map-get($font, fontName), map-get($font, glyphs));
