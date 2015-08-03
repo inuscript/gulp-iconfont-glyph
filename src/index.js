@@ -1,4 +1,3 @@
-var fs = require("fs")
 var path = require("path")
 var stream = require("stream")
 
@@ -10,7 +9,9 @@ var gutil = require("gulp-util")
 var glyphsMap = require("iconfont-glyphs-map")
 var quote = require("quote")
 
-var generateSassMap = require("./scss")
+var sassMap = require("./sass/map")
+// var sassTemplates = require("./sass/templates")
+var sassBuilder = require("./sass/")
 
 var PLUGIN_NAME = "iconfont-glyph"
 
@@ -18,7 +19,6 @@ var svgStream = function(options){
   options.log = function(){}
   return svgicons2svgfont(options)
 }
-
 
 var sanitizeMap = function(data){
   return Object.keys(data).reduce(function(obj, key){
@@ -42,26 +42,19 @@ var generateData = function(glyphs, iconPrefix, fontName, fontPath){
   return data
 }
 
-var scssTemplatePartialNames =  ["charset", "mixins", "loader"]
-var scssTemplateFileNames = function(){
-  var base = path.join(__dirname, "../template/")
-  return scssTemplatePartialNames.map(function(item){
-    return path.join(base, "/_" + item + ".scss")
-  })
-}
-
 var generateCss = function(data){
-  var map = generateSassMap(data, "font", true)
-  var templatePaths = scssTemplateFileNames()
-  var templates = templatePaths.map(function(path){
-    return fs.readFileSync(path, "utf-8")
-  })
-  templates.splice(1, 0, map)
-  var scss = templates.join("\n")
+  var map = sassMap(data, "font", true)
+  var scss = sassBuilder(map)
+  if(scss == "") return scss
   var compiler = require("node-sass")
   return compiler.renderSync({
     data: scss
   }).css
+}
+var generateSass = function(data, fontName, asDefault){
+  var map = sassMap(data, fontName, asDefault)
+  var scss = sassBuilder(map)
+  return scss
 }
 
 module.exports = function(opt){
@@ -89,7 +82,7 @@ module.exports = function(opt){
     var data = generateData(_glyphs, options.iconPrefix, fontName, options.fontPath)
     var content = (extension === "css")
                 ? generateCss(data)
-                : generateSassMap(data, fontName, options.asDefault);
+                : generateSass(data, fontName, options.asDefault);
     var glyphFile = new gutil.File({
       cwd: file.cwd,
       base: file.base,
