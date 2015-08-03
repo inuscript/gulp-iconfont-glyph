@@ -8,8 +8,9 @@ var plexer = require("plexer")
 var svgicons2svgfont = require('gulp-svgicons2svgfont')
 var gutil = require("gulp-util")
 var glyphsMap = require("iconfont-glyphs-map")
-var jsToSassString = require('json-sass/lib/jsToSassString') // TODO: Fix if json-sass bug
 var quote = require("quote")
+
+var generateSassMap = require("./scss")
 
 var PLUGIN_NAME = "iconfont-glyph"
 
@@ -41,19 +42,17 @@ var generateData = function(glyphs, iconPrefix, fontName, fontPath){
   return data
 }
 
-var generateSassMap = function(data, fontName, asDefault){
-  var prefix = "$" + fontName + ": "
-  var suffix = (!!asDefault) ? " !default;" : ""
-  return prefix + jsToSassString(data) + suffix
+var scssTemplatePartialNames =  ["charset", "mixins", "loader"]
+var scssTemplateFileNames = function(){
+  var base = path.join(__dirname, "../template/")
+  return scssTemplatePartialNames.map(function(item){
+    return path.join(base, "/_" + item + ".scss")
+  })
 }
 
 var generateCss = function(data){
   var map = generateSassMap(data, "font", true)
-  var templatePaths = [
-    path.join(__dirname, "/template/_charset.scss"),
-    path.join(__dirname, "/template/_mixins.scss"),
-    path.join(__dirname, "/template/_loader.scss")
-  ]
+  var templatePaths = scssTemplateFileNames()
   var templates = templatePaths.map(function(path){
     return fs.readFileSync(path, "utf-8")
   })
