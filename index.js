@@ -5,29 +5,15 @@ var plexer = require("plexer")
 var svgicons2svgfont = require('gulp-svgicons2svgfont')
 var gutil = require("gulp-util")
 var quote = require("quote")
-var empty = function(s){ return s }
+var path = require("path")
+var glyphsMap = require("iconfont-glyphs-map")
+
 var PLUGIN_NAME = "iconfont-glyph"
 
 var svgStream = function(options){
   options.log = function(){}
   return svgicons2svgfont(options)
 }
-
-var glyphsMap = function(glyphs, withQuote, withBackslash){
-  var bs = withBackslash ? "\\" : ""
-  var fn = withQuote ? quote : empty
-
-  return glyphs.reduce(function(obj, glyph){
-    glyphs.forEach(function(glyph){
-      // var code = "\\" + glyph.unicode[0].charCodeAt(0).toString(16).toUpperCase()
-      var code = glyph.unicode[0].charCodeAt(0).toString(16).toUpperCase()
-      obj[glyph.name] = fn(bs + code)
-    })
-    return obj
-  }, {})
-}
-
-
 
 module.exports = function(opt){
   var svgOptions = extend({}, opt.svgOptions) // copy
@@ -50,8 +36,9 @@ module.exports = function(opt){
       glyphs: glyphsMap(_glyphs, options.withQuote, options.withBackslash)
     }
     var glyphFile = new gutil.File({
-      path: gutil.replaceExtension(file.path),
-      extension: "json",
+      cwd: file.cwd,
+      base: file.base,
+      path: path.join(file.base, svgOptions.fontName),
       contents: new Buffer(JSON.stringify(data)),
       data: data // gulp-data compability
     })
