@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
@@ -22,5 +22,8 @@
     "quote": "^0.4.0",
     "through2": "^2.0.0",
     "vinyl-transform": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5"
   }
 }
