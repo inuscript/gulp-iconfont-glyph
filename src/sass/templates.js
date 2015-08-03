@@ -10,11 +10,11 @@ var getPath = function(partial){
 
 module.exports.partialNames = partialNames
 module.exports = function(){
-  var map = new Map()
+  var map = {}
   partialNames.forEach(function(partial){
     var path = getPath(partial)
     var scss = fs.readFileSync(path, "utf-8")
-    map.set(partial, scss)
+    map[partial] = scss
   })
   return map
 }

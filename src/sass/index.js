@@ -9,9 +9,11 @@ module.exports = function(map, includes){
     includes = allPartials
   }
   var templates = sassTemplates()
-  templates.set("map", map)
+  templates["map"] = map
   var scssContents = []
   return order.map(function(partial){
-    return templates.get(partial, "")
+    return templates[partial] || null
+  }).filter(function(scss){
+    return scss !== null
   }).join("\n\n")
 }
