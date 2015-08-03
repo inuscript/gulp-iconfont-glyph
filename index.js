@@ -1,12 +1,12 @@
+var path = require("path")
 var extend = require("extend")
 var stream = require("stream")
 var through2 = require("through2")
 var plexer = require("plexer")
 var svgicons2svgfont = require('gulp-svgicons2svgfont')
 var gutil = require("gulp-util")
-var quote = require("quote")
-var path = require("path")
 var glyphsMap = require("iconfont-glyphs-map")
+var jsToSassString = require('json-sass/lib/jsToSassString') // TODO: Fix if json-sass bug
 
 var PLUGIN_NAME = "iconfont-glyph"
 
@@ -15,14 +15,20 @@ var svgStream = function(options){
   return svgicons2svgfont(options)
 }
 
+var toSass = function(glyphs, fontName, asDefault){
+  var prefix = "$" + fontName + ": "
+  var suffix = (!!asDefault) ? " !default;" : ""
+  return prefix + jsToSassString(glyphs) + suffix
+}
+
 module.exports = function(opt){
   var svgOptions = extend({}, opt.svgOptions) // copy
   var inputStream = svgStream(svgOptions)
   var outputStream = new stream.PassThrough({ objectMode: true });
   var _glyphs = undefined;
   var options = extend({
-    withQuote: false, 
-    backslash: true
+    fontName: null,
+    asDefault: true,
   }, opt)
   inputStream.on('glyphs', function(glyphs){
     _glyphs = glyphs // memorize
@@ -33,14 +39,17 @@ module.exports = function(opt){
       return cb(null);
     }
     var data = {
-      glyphs: glyphsMap(_glyphs, options.withQuote, options.withBackslash)
+      fontName : options.svgOptions.fontName,
+      fontName : options.svgOptions.fontName,
+      glyphs: glyphsMap(_glyphs, true, true)
     }
+    var fontName = options.fontVariable || options.svgOptions.fontName
+    var sass = toSass(data, fontName, options.asDefault);
     var glyphFile = new gutil.File({
       cwd: file.cwd,
       base: file.base,
-      path: path.join(file.base, svgOptions.fontName),
-      contents: new Buffer(JSON.stringify(data)),
-      data: data // gulp-data compability
+      path: path.join(file.base, svgOptions.fontName) + ".scss",
+      contents: new Buffer(sass),
     })
     outputStream.push(glyphFile)
     cb()
