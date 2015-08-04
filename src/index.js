@@ -9,10 +9,6 @@ var gutil = require("gulp-util")
 var glyphsMap = require("iconfont-glyphs-map")
 var quote = require("quote")
 
-var sassMap = require("./sass/map")
-// var sassTemplates = require("./sass/templates")
-var sassBuilder = require("./sass/")
-
 var PLUGIN_NAME = "iconfont-glyph"
 
 var svgStream = function(options){
@@ -41,20 +37,14 @@ var generateData = function(glyphs, iconPrefix, fontName, fontPath){
   data.glyphs = glyphsMap(glyphs, true, true)
   return data
 }
-
-var generateCss = function(data){
-  var map = sassMap(data, "font", true)
-  var scss = sassBuilder(map)
-  if(scss == "") return scss
-  var compiler = require("node-sass")
-  return compiler.renderSync({
-    data: scss
-  }).css
-}
-var generateSass = function(data, fontName, asDefault){
-  var map = sassMap(data, fontName, asDefault)
-  var scss = sassBuilder(map)
-  return scss
+var renderFunction = function(format){
+  switch(format){
+    case "scss":
+      return require("./render/scss")
+    case "css":
+    default:
+      return require("./render/css")
+  }
 }
 
 module.exports = function(opt){
@@ -63,13 +53,13 @@ module.exports = function(opt){
   var outputStream = new stream.PassThrough({ objectMode: true });
   var _glyphs = undefined;
   var options = extend({
-    output: "css",
+    format: "css",
     fontPath: undefined,
     fontName: undefined,
     iconPrefix: ".icon-",
     asDefault: true,
   }, opt)
-  var extension = options.output
+  var format = (options.format === "scss") ? "scss" : "css"
   inputStream.on('glyphs', function(glyphs){
     _glyphs = glyphs // memorize
   }).on('error', function(err){
@@ -80,13 +70,12 @@ module.exports = function(opt){
     }
     var fontName = options.fontName || options.svgOptions.fontName
     var data = generateData(_glyphs, options.iconPrefix, fontName, options.fontPath)
-    var content = (extension === "css")
-                ? generateCss(data)
-                : generateSass(data, fontName, options.asDefault);
+    var renderFn = renderFunction(format)
+    var content = renderFn(data, {fontName: fontName, asDefault: options.asDefault})
     var glyphFile = new gutil.File({
       cwd: file.cwd,
       base: file.base,
-      path: path.join(file.base, svgOptions.fontName) + "." + extension,
+      path: path.join(file.base, svgOptions.fontName) + "." + format,
       contents: new Buffer(content),
     })
     outputStream.push(glyphFile)

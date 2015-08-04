@@ -1,6 +1,6 @@
 var fs = require("fs")
 var path = require("path")
-var partialnames = require("./partials")
+var partialNames = require("./partials")
 
 var getPath = function(partial){
   var base = path.join(__dirname, "../../", "/template/")

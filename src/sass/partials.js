@@ -1,9 +1,9 @@
 var partialNames = [{
-  name: "mixins",
-  template: true,
-}, {
   name: "map",
   template: false
+}, {
+  name: "mixins",
+  template: true,
 }, {
   name: "loader",
   template: true
