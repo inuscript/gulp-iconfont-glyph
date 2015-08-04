@@ -1,4 +1,4 @@
-@mixin font-face($path, $name){
+@mixin iconfont-font-face($path, $name){
   $url: #{$path}#{$name};
   @font-face {
     font-family: $name;
@@ -11,7 +11,7 @@
   }
 }
 
-@mixin generate-icons($prefix, $name, $glyphs){
+@mixin iconfont-generate-icons($prefix, $name, $glyphs){
   %icon {
     font-family: "#{$name}";
     -webkit-font-smoothing: antialiased; 
@@ -30,4 +30,16 @@
       content: quote(#{$code});
     }
   }
+}
+
+@mixin iconfont-generate-font($font){
+  @include iconfont-font-face(
+    map-get($font, fontPath),
+    map-get($font, fontName)
+  );
+  @include iconfont-generate-icons(
+    map-get($font, iconPrefix),
+    map-get($font, fontName),
+    map-get($font, glyphs)
+  );
 }
