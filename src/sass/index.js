@@ -1,7 +1,10 @@
 var sassMap = require("./map")
 var sassTemplates = require("./templates")
+var partialNames = require("./partials") 
 
-var order = ["charset", "map", "mixins", "loader"] //const
+var order = partialNames.map(function(p){
+  return p.name
+})
 var allPartials = order
 
 module.exports = function(map, includes){
@@ -10,6 +13,7 @@ module.exports = function(map, includes){
   }
   var templates = sassTemplates()
   templates["map"] = map
+
   var scssContents = []
   return order.map(function(partial){
     return templates[partial] || null
