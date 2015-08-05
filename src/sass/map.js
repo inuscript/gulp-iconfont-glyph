@@ -2,6 +2,6 @@ var jsToSassString = require('json-sass/lib/jsToSassString') // TODO: Fix if jso
 
 module.exports = function(data, fontName, asDefault){
   var prefix = "$" + fontName + ": "
-  var suffix = (!!asDefault) ? " !default;" : ""
+  var suffix = (!!asDefault) ? " !default;" : ";"
   return prefix + jsToSassString(data) + suffix
 }
