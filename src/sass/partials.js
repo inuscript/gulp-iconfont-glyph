@@ -3,7 +3,7 @@ var partialNames = [{
   template: false
 }, {
   name: "mixins",
-  template: true,
+  template: true
 }, {
   name: "loader",
   template: true

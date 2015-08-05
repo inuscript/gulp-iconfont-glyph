@@ -37,6 +37,7 @@ var generateData = function(glyphs, iconPrefix, fontName, fontPath){
   data.glyphs = glyphsMap(glyphs, true, true)
   return data
 }
+
 var renderFunction = function(format){
   switch(format){
     case "scss":
@@ -47,19 +48,37 @@ var renderFunction = function(format){
   }
 }
 
+var generate = function(glyphs, file, options){
+  var svgOptions = options.svgOptions
+  var fontPath = options.fontPath
+  var iconPrefix = options.iconPrefix
+  var fontName = options.fontName || svgOptions.fontName
+  var format = (!!options.scss) ? "scss" : "css"
+
+  var data = generateData(glyphs, iconPrefix, fontName, fontPath)
+  var renderFn = renderFunction(format)
+  var content = renderFn(data, {fontName: fontName, asDefault: options.asDefault})
+
+  return new gutil.File({
+    cwd: file.cwd,
+    base: file.base,
+    path: path.join(file.base, svgOptions.fontName) + "." + format,
+    contents: new Buffer(content),
+  })
+}
+
 module.exports = function(opt){
   var svgOptions = extend({}, opt.svgOptions) // copy
   var inputStream = svgStream(svgOptions)
   var outputStream = new stream.PassThrough({ objectMode: true });
   var _glyphs = undefined;
   var options = extend({
-    format: "css",
+    scss: false,
     fontPath: undefined,
     fontName: undefined,
     iconPrefix: ".icon-",
     asDefault: true,
   }, opt)
-  var format = (options.format === "scss") ? "scss" : "css"
   inputStream.on('glyphs', function(glyphs){
     _glyphs = glyphs // memorize
   }).on('error', function(err){
@@ -68,16 +87,12 @@ module.exports = function(opt){
     if (_glyphs === undefined) {
       return cb(null);
     }
-    var fontName = options.fontName || options.svgOptions.fontName
-    var data = generateData(_glyphs, options.iconPrefix, fontName, options.fontPath)
-    var renderFn = renderFunction(format)
-    var content = renderFn(data, {fontName: fontName, asDefault: options.asDefault})
-    var glyphFile = new gutil.File({
-      cwd: file.cwd,
-      base: file.base,
-      path: path.join(file.base, svgOptions.fontName) + "." + format,
-      contents: new Buffer(content),
-    })
+    // var fontName = options.fontName || options.svgOptions.fontName
+    // var data = generateData(_glyphs, options.iconPrefix, fontName, options.fontPath)
+    // var content = renderContent(format, data, {fontName: fontName, asDefault: options.asDefault})
+     //data, {fontName: fontName, asDefault: options.asDefault})
+
+    var glyphFile = generate(_glyphs, file, options)
     outputStream.push(glyphFile)
     cb()
   }, function(){
