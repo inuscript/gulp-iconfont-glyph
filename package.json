@@ -15,6 +15,7 @@
     "gulp-util": "^3.0.6",
     "gutil": "^1.6.4",
     "iconfont-glyphs-map": "^0.1.2",
+    "iconfont-sass-style": "0.0.1",
     "json-sass": "^1.3.5",
     "map-stream": "0.0.6",
     "node-sass": "^3.2.0",
