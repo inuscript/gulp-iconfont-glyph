@@ -16,28 +16,6 @@ var svgStream = function(options){
   return svgicons2svgfont(options)
 }
 
-var sanitizeMap = function(data){
-  return Object.keys(data).reduce(function(obj, key){
-    var item = data[key]
-    if(item === undefined){
-      return obj
-    }
-    obj[key] = quote(item)
-    return obj
-  }, {})
-}
-
-var generateData = function(glyphs, iconPrefix, fontName, fontPath){
-  var map = {
-    iconPrefix: iconPrefix,
-    fontName: fontName,
-    fontPath: fontPath
-  }
-  var data = sanitizeMap(map)
-  data.glyphs = glyphsMap(glyphs, true, true)
-  return data
-}
-
 var renderFunction = function(format){
   switch(format){
     case "scss":
