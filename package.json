@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha"
   },
+  "repository": "https://github.com/inuscript/gulp-iconfont-style",
   "keywords": [],
   "author": "",
   "license": "ISC",
