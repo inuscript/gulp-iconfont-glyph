@@ -16,6 +16,13 @@ var svgStream = function(options){
   return svgicons2svgfont(options)
 }
 
+var compileSass = function(scss){
+  var compiler = require("node-sass") 
+  var css = compiler.renderSync({
+    data: scss
+  }).css.toString()
+  return css
+}
 var generate = function(glyphs, file, options){
   var svgOptions = options.svgOptions
   var fontPath = options.fontPath
@@ -24,7 +31,9 @@ var generate = function(glyphs, file, options){
   var format = (options.output === "scss") ? "scss" : "css"
 
   var content = iconfontStyle(glyphs, fontName, fontPath, {asDefault: options.asDefault})
-
+  if(format === "css"){
+    content = compileSass(content)
+  }
   return new gutil.File({
     cwd: file.cwd,
     base: file.base,
