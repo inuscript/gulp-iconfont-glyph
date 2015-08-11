@@ -26,8 +26,8 @@ var compileSass = function(scss){
 var generate = function(glyphs, file, options){
   var svgOptions = options.svgOptions
   var iconPrefix = options.iconPrefix
-  var fontName = options.fontName || svgOptions.fontName
-  var fontPath = options.fontPath || svgOptions.fontPath
+  var fontName = svgOptions.fontName
+  var fontPath = options.fontPath
   var format = (options.output === "scss") ? "scss" : "css"
 
   var content = iconfontStyle(glyphs, fontName, fontPath, {asDefault: options.asDefault})
@@ -49,7 +49,6 @@ module.exports = function(opt){
   var options = extend({
     output: "css",
     fontPath: undefined,
-    fontName: undefined,
   }, opt)
 
   var _glyphs = undefined;
