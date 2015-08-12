@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "clean": "gulp clean",
+    "build": "gulp clean default",
+    "diff-dest": "diff -r dest/ test/fixture/dest/",
+    "test": "npm run build; npm run diff-dest",
+    "fixture": "npm run build; cp -r dest/ test/fixture/dest/"
   },
   "repository": "https://github.com/inuscript/gulp-iconfont-style",
   "keywords": [],
@@ -26,6 +30,9 @@
     "vinyl-transform": "^1.0.0"
   },
   "devDependencies": {
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-iconfont": "^4.0.0",
     "mocha": "^2.2.5"
   }
 }
