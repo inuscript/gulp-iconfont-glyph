@@ -23,14 +23,14 @@ var compileSass = function(scss){
   }).css.toString()
   return css
 }
-var generate = function(glyphs, file, options){
+var generate = function(glyphs, file, fontPath, styleOptions){
   var svgOptions = options.svgOptions
   var iconPrefix = options.iconPrefix
+  var asDefault = options.asDefault
   var fontName = svgOptions.fontName
-  var fontPath = options.fontPath
   var format = (options.output === "scss") ? "scss" : "css"
 
-  var content = iconfontStyle(glyphs, fontName, fontPath, {asDefault: options.asDefault})
+  var content = iconfontStyle(glyphs, fontName, fontPath, styleOptions)
   if(format === "css"){
     content = compileSass(content)
   }
@@ -44,12 +44,15 @@ var generate = function(glyphs, file, options){
 
 module.exports = function(opt){
   var svgOptions = extend({}, opt.svgOptions) // copy
+  var styleOptions = extend({}, opt.styleOptions) // copy
   var inputStream = svgStream(svgOptions)
   var outputStream = new stream.PassThrough({ objectMode: true });
   var options = extend({
     output: "css",
     fontPath: undefined,
   }, opt)
+
+  var fontPath = options.fontPath
 
   var _glyphs = undefined;
   inputStream.on('glyphs', function(glyphs){
@@ -60,7 +63,7 @@ module.exports = function(opt){
     if (_glyphs === undefined) {
       return cb(null);
     }
-    var glyphFile = generate(_glyphs, file, options)
+    var glyphFile = generate(_glyphs, file, fontPath, styleOptions)
     outputStream.push(glyphFile)
     cb()
   }, function(){

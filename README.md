@@ -1,6 +1,8 @@
 # gulp-iconfont-style
+Stylesheet generator for [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont/).
 
 # Usage Example
+
 ```js
 var fontSetting = {
   src : ["test/svg/*.svg"],
@@ -39,3 +41,12 @@ Set your font path.
 default: `css` 
 You can set `css` or `scss`.
 If you set `scss`, you can get raw scss file.
+
+## options.styleOptions
+Pass options to [iconfont-sass-style](https://github.com/inuscript/iconfont-sass-style)
+
+# Motivation
+- `gulp-iconfont-css` depends old version's gulp-iconfont
+  - Cannot output as `glyph.unicode[0].charCodeAt(0).toString(16).toUpperCase()`
+- Enable raw sass file.
+- More customizable sass output.
