@@ -1,3 +1,4 @@
+// For sample and testing
 var fs = require("fs")
 var path = require("path")
 
@@ -14,7 +15,7 @@ gulp.task("clean", function(){
 
 var fontSetting = {
   src : ["svg/*.svg"],
-  dest : "./test/dest/fonts",
+  dest : "./dest/",
   options : {
     fontName: "myFont",
     timestamp: 10
@@ -26,6 +27,7 @@ gulp.task("iconfont", function(){
     .pipe(iconfont(fontSetting.options))
     .pipe(gulp.dest(path.join(fontSetting.dest, "iconfont")))
 })
+
 gulp.task("iconfont-style-css", function(){
   return gulp.src(fontSetting.src)
     .pipe(iconfontStyle({
