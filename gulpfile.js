@@ -9,18 +9,18 @@ var iconfont = require("gulp-iconfont")
 
 var iconfontStyle = require('./');
 
-gulp.task("clean", function(){
-  del("dest")
-})
-
 var fontSetting = {
-  src : ["svg/*.svg"],
+  src : ["test/svg/*.svg"],
   dest : "./dest/",
   options : {
     fontName: "myFont",
     timestamp: 10
   }
 }
+
+gulp.task("clean", function(){
+  del("dest")
+})
 
 gulp.task("iconfont", function(){
   return gulp.src(fontSetting.src)
