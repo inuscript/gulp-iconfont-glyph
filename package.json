@@ -1,7 +1,7 @@
 {
   "name": "gulp-iconfont-style",
   "version": "1.0.0",
-  "description": "",
+  "description": "Stylesheet generator for gulp-iconfont",
   "main": "index.js",
   "files": ["index.js"],
   "scripts": {
